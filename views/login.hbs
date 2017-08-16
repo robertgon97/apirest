@@ -1,0 +1,23 @@
+<form id="Login" method="post">
+    <input type="email" name="correo" placeholder="Ingresa tu correo">
+    <br><br>
+    <input type="password" name="contrasena" id="Ingresa tu contrasena">
+    <br><br>
+    <input type="submit" value="Login">
+</form>
+<script type="text/javascript">
+    const formLogin = document.querySelector('#Login')
+    const formData = new FormData(formLogin) //datos del formulario
+
+    formLogin.addEventListener('submit', event =>{
+        //event.preventDefault() //no permite que la pagina recargue
+        //fetch('direcciondelapi', { //trae los datos de la pagina del api
+        //    method : 'POST',
+        //    body : formData
+        //})
+        //.then(res => res.json()) //promesa que devuelve json
+        //.then(data => {
+        //    localStorage.setItem('token',data.token)//para guardarlo en el navegador
+        //})
+    })
+</script>

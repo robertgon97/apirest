@@ -1,0 +1,30 @@
+<form id="registro" method="post" enctype="x-www-form-urlencoded">
+    <input type="text" name="nombre" id="nombre" placeholder="Nombre del Producto">
+    <br><br>
+    <input type="text" name="foto" id="foto" placeholder="Ingrese la fotografia">
+    <br><br>
+    <input type="number" name="precio" id="precio" placeholder="Ingrese el Monto">
+    <br><br>
+    <input type="text" name="categoria" id="categoria" placeholder="Ingrese la categoria del producto">
+    <br><br>
+    <input type="text" name="descripcion" id="descripcion" placeholder="Ingrese la descripcion del producto">
+    <br><br>
+    <input type="submit" value="Registar">
+</form>
+<script type="text/javascript">
+    const formLogin = document.querySelector('#registro')
+    const formData = new FormData(formLogin) //datos del formulario
+
+    formLogin.addEventListener('submit', event =>{
+        event.preventDefault() //no permite que la pagina recargue
+        fetch('/api/productos', { //trae los datos de la pagina del api
+            method : 'POST',
+            body : formData
+        })
+        .then(res => res.json()) //promesa que devuelve json
+        .then(data => {
+        //    localStorage.setItem('token',data.token)//para guardarlo en el navegador
+        console.log(data)
+        })
+    })
+</script>

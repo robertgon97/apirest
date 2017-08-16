@@ -1,0 +1,32 @@
+{
+  "name": "apirest",
+  "version": "1.0.0",
+  "description": "ofrece la ventaja de guardar productos de la base de datos",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index",
+    "test": "nodemon index"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/robertgon97/apirest.git"
+  },
+  "author": "Robert Gonzalez",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/robertgon97/apirest/issues"
+  },
+  "homepage": "https://github.com/robertgon97/apirest#readme",
+  "devDependencies": {
+    "nodemon": "^1.11.0"
+  },
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "express": "^4.15.4",
+    "express-handlebars": "^3.0.0",
+    "jwt-simple": "^0.5.1",
+    "method-override": "^2.3.9",
+    "moment": "^2.18.1",
+    "mongoose": "^4.11.7"
+  }
+}
