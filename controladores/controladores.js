@@ -6,6 +6,8 @@ const mongoose = require('mongoose') // guarda en la base de datos
 const configuracion = require('../configuracion') // configuracion de la base de datos y token
 const Productos = require('./constructor-productos') // el constructor que tiene la logica de los datos productos
 const MetodoUsuario = require('./constructor-usuario') // el constructor para los usuarios
+const codificador = require('../jasonwebtoken/codificador') // procedimiento para crear token y verificar token
+const Caja = require('./constructor-caja') // el constructor caja
 
 
 function Saluda (req,res,ID){
@@ -28,7 +30,25 @@ function buscaespecifico(req,res,ID){
     })
 }
 function login(req,res){
-    //
+    //Busca el usuario
+    MetodoUsuario.findOne({ correo: req.body.correo}, function(err, usuarioEncontrado) {
+        if (err) return res.status(500).send({Mensaje: `Error en el servidor ${err}`})
+        if (!usuarioEncontrado) {
+            res.json({ proceso: false, Mensaje: 'Autenticacion fallida, usuario no encontrado' });
+        } else if (usuarioEncontrado) {
+            // Chequea las contrasenas
+            if (usuarioEncontrado.contrasena != req.body.contrasena) {
+                res.json({ proceso: false, Mensaje: 'Autenticacion fallida, contrasena invalida' });
+            } else {
+                // regresa la informacion y el JSON-TOKEN
+                res.json({
+                    proceso: true,
+                    Mensaje: 'Disfruta tu token!',
+                    token: codificador.CrearToken(usuarioEncontrado)
+                });
+            }
+        }
+    });
 }
 function registrarusuario (req,res){
     console.log('Comprobante de lo que guardaste')
@@ -75,13 +95,95 @@ function actualizaproducto (req,res, ID){
 }
 function eliminaproducto (req,res){
     let IDproducto = req.params.ID
+    console.log('Eliminando el Producto ' + IDproducto)
     Productos.findById(IDproducto, (err,resultado) =>{
-        if(err) return res.status(500).send({Mensaje: `Error al eliminar la peticion ${err}`})
+        if(err) return res.status(500).send({Mensaje: `Error al eliminar la peticion ${err}`}), console.log('Error 500 del Servidor')
 
         resultado.remove(err => {
-            if(err) return res.status(500).send({Mensaje: `Error al eliminar la informacion ${err}`})
-            res.status(200).send({Mensaje: `El Producto fue eliminado`})
+            if(err) return res.status(500).send({Mensaje: `Error al eliminar la informacion ${err}`}), console.log('Error 500 del Servidor')
+            res.status(200).send({Mensaje: `El Producto fue eliminado`}), console.log('El producto fue eliminado')
         })
+    })
+}
+function CreaCaja (req,res){
+    console.log('Creando Caja...');
+    var cajaDB = new Caja();
+    cajaDB.Dueno = req.body.Dueno;
+    cajaDB.Lapiz.Color = req.body.LapizColor;
+    cajaDB.Lapiz.Tamano = req.body.LapizTamano;
+    cajaDB.Lapiz.Marca = req.body.LapizMarca;
+    cajaDB.Cuaderno.Hoja._id = cajaDB._id;
+    cajaDB.Cuaderno.Hoja.Color = req.body.CuadernoHojaColor;
+    cajaDB.Cuaderno.Hoja.Tamano = req.body.CuadernoHojaTamano;
+    cajaDB.Cuaderno.Lomo._id = cajaDB._id;
+    cajaDB.Cuaderno.Lomo.Color = req.body.CuadernoLomoColor;
+    cajaDB.Cuaderno.Lomo.Tamano = req.body.CuadernoLomoTamano;
+    cajaDB.Cuaderno.Lomo.Titulo = req.body.CuadernoLomoTitulo;
+    cajaDB.Cuaderno.Portada._id = cajaDB._id;
+    cajaDB.Cuaderno.Portada.Color = req.body.CuadernoPortadaColor;
+    cajaDB.Cuaderno.Portada.Tamano = req.body.CuadernoPortadaTamano;
+    cajaDB.Cuaderno.Portada.Titulo = req.body.CuadernoPortadaTitulo;
+    cajaDB.Audifono._id = cajaDB._id;
+    cajaDB.Audifono.Cable = req.body.AudifonoCable;
+    cajaDB.Audifono.Corneta = req.body.AudifonoCorneta;
+    cajaDB.Telefono._id = cajaDB._id;
+    cajaDB.Telefono.Marca = req.body.TelefonoMarca;
+    cajaDB.Telefono.SO = req.body.TelefonoSO;
+    cajaDB.Telefono.Memoria = req.body.TelefonoMemoria;
+    cajaDB.Telefono.Numero = req.body.TelefonoNumero;
+    cajaDB.Telefono.Color = req.body.TelefonoColor;
+    console.log('GUARDANDO......')
+    cajaDB.save((err, cajaDB) => {
+        if(err) res.status(500).send({Mensaje: `El Numero de telefono ya existe en la base de datos`}), console.log('Fallo en la carga de datos')
+        if (!err) res.status(200).send({CAJA_final: cajaDB}), console.log('Guardado Correctamente!')
+    })
+    
+}
+function ActualizarCaja (req,res,ID){
+    let IDcaja = req.params.ID;
+    let ActualizarCaja = req.body;
+    console.log('Modificando Datos de la Tabla...')
+    Caja.findByIdAndUpdate(IDcaja, ActualizarCaja, (err,productoactualizado) =>{
+        if(err) return res.status(500).send({Mensaje: `Error al realizar la peticiones de actualizacion ${err}`}), console.log('Error 500 del Servidor')
+        if(!productoactualizado) return res.status(404).send({Mensaje: `La Caja no existe ${err}`}), console.log('Error 404 del Servidor, La Caja NO Existe')
+
+    res.status(200).send({CAJA_ACTUALIZADA :productoactualizado}), console.log('Caja Actualizada.!')
+    })
+}
+function eliminaCaja (req,res){
+    let IDcaja = req.params.ID
+    Caja.findById(IDcaja, (err,resultado) =>{
+        try{
+            console.log('Eliminando Caja....')
+            resultado.remove(err => {
+                res.status(200).send({Mensaje: `La caja fue eliminada`}), console.log('Caja Eliminada Exitosamente!')
+            })
+        }catch(err){
+            if(err) return res.status(500).send({Mensaje: `Error del servidor ${err}`}), console.log('Error del Servidor')
+            if(err) return res.status(500).send({Mensaje: `Error al eliminar la caja ${err}`}), console.log('Error al eliminar la caja')
+        }
+        
+        
+
+        
+    })
+}
+function buscatodacaja (req,res){
+    console.log('Buscando las Cajas...')
+    Caja.find({}, (err, todaslascajas) =>{
+        if(err) return res.status(500).send({Mensaje:`Error al mostrar. ${err}`}), console.log('Error del Servidor 500')
+        if(!todaslascajas) return res.status(404)-send({Mensaje: `Error, ${err}`}), console.log('Error del Servidor 404')
+        res.status(200).send({ todaslascajas }), console.log('Exito!')
+    })
+}
+function buscacajaespecifico(req,res,ID){
+    console.log('Buscando el ID de la Caja: ' + req.params.ID)
+    let IDcaja = req.params.ID;
+    Caja.findById(IDcaja, (err,resultado) =>{
+        if(err) return res.status(500).send({Mensaje: `Error al realizar la peticiones ${err}`}), console.log('Error 500 del Servidor')
+        if(!resultado) return res.status(404).send({Mensaje: `La caja no existe ${err}`}), console.log('Error 404 del Servidor, la caja NO existe')
+
+        res.status(200).send({Producto:resultado}), console.log('Exito.!')
     })
 }
 
@@ -93,5 +195,10 @@ module.exports = {
     registrarusuario,
     guardaproducto,
     actualizaproducto,
-    eliminaproducto
+    eliminaproducto,
+    CreaCaja,
+    ActualizarCaja,
+    eliminaCaja,
+    buscatodacaja,
+    buscacajaespecifico
 }
