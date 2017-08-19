@@ -14,10 +14,9 @@ exports.CrearToken = function(usuario) {
 };
 exports.VerificarToken = function(req, res, next) { //comprobar que la petición, req lleva la cabecera de autorización req.headers.authorization
     if(!req.headers.autorizacion) { //Si la petición no envía una autorización, envíamos el código de error 403 de acesso denegado.
-    return res.status(403).send({message: req.headers.autorizacion});
+    return res.status(403).send({Mensaje: 'Logueate para ver esta pagina'});
     next();
     }
-   
     var token = req.headers.autorizacion.split(" ")[1]; // separamos el segundo dato que es el token 
     var payload = jwt_simple.decode(token, configuracion.SECRET_TOKEN); //tomamos el token
    

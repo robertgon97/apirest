@@ -1,25 +1,28 @@
 <form id="Registro" method="post">
-    <input type="email" name="correo" placeholder="Ingresa tu correo">
+    <input type="text" name="nombre" placeholder="Ingresa tu Nombre">
     <br><br>
-    <input type="password" name="contrasena" id="Ingresa tu contrasena">
+    <input type="text" name="foto" placeholder="Ingresa tu Foto">
     <br><br>
-    <input type="text" name="usuario" id="Ingresa tu Nombre de Usuario">
+    <input type="text" name="correo" placeholder="Ingresa tu correo">
     <br><br>
-    <input type="submit" value="Login">
+    <input type="text" name="contrasena" placeholder="Ingresa tu contrasena">
+    <br><br>
+    <input type="submit" value="Registro">
 </form>
 <script type="text/javascript">
-    const formLogin = document.querySelector('#Login')
+    const formLogin = document.querySelector('#Registro')
     const formData = new FormData(formLogin) //datos del formulario
 
     formLogin.addEventListener('submit', event =>{
-        //event.preventDefault() //no permite que la pagina recargue
-        //fetch('direcciondelapi', { //trae los datos de la pagina del api
-        //    method : 'POST',
-        //    body : formData
-        //})
-        //.then(res => res.json()) //promesa que devuelve json
-        //.then(data => {
-        //    localStorage.setItem('token',data.token)//para guardarlo en el navegador
-        //})
+        event.preventDefault() //no permite que la pagina recargue
+        fetch('/api/registro', { //trae los datos de la pagina del api
+            method : 'POST',
+            body : formData
+        })
+        .then(res => res.json()) //promesa que devuelve json
+        .then(data => {
+            console.log(data)
+            //localStorage.setItem('token',data.token)//para guardarlo en el navegador
+        })
     })
 </script>

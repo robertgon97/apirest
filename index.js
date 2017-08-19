@@ -8,6 +8,7 @@ const configuracion = require('./configuracion') // configuracion de la base de 
 const controladores = require('./controladores/controladores') // donde guardo las funciones de los datos y eso
 const method_override = require('method-override') // segun que es el metodo de anulacion
 const codificador = require('./jasonwebtoken/codificador') // exporta CrearToken
+const caja = require('./controladores/buscador-caja')
 
 const app=express()
 
@@ -30,7 +31,7 @@ app.use('/login',/*controladores ,*/(req,res) => { //nosirve
 app.use('/registro',/*controladores ,*/ (req,res) => {//nosirve
     res.render('registro')
 })
-app.use('/productos',codificador.VerificarToken , (req,res) => { 
+app.use('/productos' , (req,res) => { 
     res.render('productos')
 })
 app.use('/producto-especifico',/*controladores ,*/ (req,res) => { //no sirve
@@ -43,20 +44,21 @@ app.use('/saludo/:ID',/*controladores ,*/ (req,res) => { // no sirve
     res.render('saludo')
 })
 //vista controlador
-app.get('/api/saludo/:ID', controladores.Saluda);
-app.get('/api/productos', controladores.buscatodos);
-app.get('/api/productos/:ID', controladores.buscaespecifico);
-app.post('/api/login', controladores.login); 
-app.post('/api/registro', controladores.registrarusuario);
-app.post('/api/productos', codificador.VerificarToken, controladores.guardaproducto);
-app.put('/api/productos/:ID', controladores.actualizaproducto);
-app.delete('/api/productos/:ID', controladores.eliminaproducto);
-
-app.get('/api/cajas', controladores.buscatodacaja);
-app.get('/api/cajas/:ID', controladores.buscacajaespecifico);
-app.post('/api/caja', controladores.CreaCaja);
-app.put('/api/cajas/:ID', controladores.ActualizarCaja);
-app.delete('/api/cajas/:ID', controladores.eliminaCaja);
+app.get('/api/saludo/:ID', controladores.Saluda); //Saludo
+app.get('/api/productos', controladores.buscatodos); //Todos los Productos
+app.get('/api/productos/:ID', controladores.buscaespecifico); //Producto Especifico
+app.post('/api/login', controladores.login);  //Inicia Sesion
+app.post('/api/registro', controladores.registrarusuario); //Registro Usuario
+app.post('/api/productos', codificador.VerificarToken, controladores.guardaproducto); //Registra producto
+app.put('/api/productos/:ID', controladores.actualizaproducto); // actualiza producto
+app.delete('/api/productos/:ID', controladores.eliminaproducto); //elimina producto
+        //cajas
+app.get('/api/cajas/:ID/:OBJETO/:DATO', codificador.VerificarToken,caja.BusquedaAvanzada)
+app.get('/api/cajas/:ID', codificador.VerificarToken,caja.buscaespecifico); // Caja especifica
+app.get('/api/cajas', codificador.VerificarToken,caja.buscatodacaja); //Todas las Cajas
+app.post('/api/caja', controladores.CreaCaja);// Crear Caja
+app.put('/api/cajas/:ID', controladores.ActualizarCaja); //Actualiza caja
+app.delete('/api/cajas/:ID', controladores.eliminaCaja); //elimina caja
 
 //conexion a la base de datos y al puerto
 mongoose.connect(configuracion.db, (err,res) =>{

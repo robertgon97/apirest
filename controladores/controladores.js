@@ -51,7 +51,7 @@ function login(req,res){
     });
 }
 function registrarusuario (req,res){
-    console.log('Comprobante de lo que guardaste')
+    console.log('REGISTRO DE USUARIO')
     console.log(req.body)
     var UsuarioGuardado = new MetodoUsuario
     UsuarioGuardado.nombre = req.body.nombre;
@@ -59,7 +59,17 @@ function registrarusuario (req,res){
     UsuarioGuardado.correo = req.body.correo;
     UsuarioGuardado.contrasena = req.body.contrasena;
     UsuarioGuardado.nivelAdministrador = req.body.nivelAdministrador;
-
+    if (UsuarioGuardado.nombre == null){
+        res.status(400).send({Mensaje: `Nombre de Usuario Vacio`})
+    }else if (UsuarioGuardado.foto == null) {
+        res.status(400).send({Mensaje: `No tienes foto insertada`})
+    } else if (UsuarioGuardado.correo == null) {
+        res.status(400).send({Mensaje: `Correo Vacio`})
+    } else if (UsuarioGuardado.contrasena == null) {
+        res.status(400).send({Mensaje: `Contrasena Vacia`})
+    } else if(UsuarioGuardado.nivelAdministrador == null){
+        UsuarioGuardado.nivelAdministrador=false;
+    }
     UsuarioGuardado.save((err, UsuarioGuardado) =>{
         if(err) res.status(500).send({Mensaje: `Error al guardar el usuario ${err}`})
     })
@@ -162,28 +172,6 @@ function eliminaCaja (req,res){
             if(err) return res.status(500).send({Mensaje: `Error del servidor ${err}`}), console.log('Error del Servidor')
             if(err) return res.status(500).send({Mensaje: `Error al eliminar la caja ${err}`}), console.log('Error al eliminar la caja')
         }
-        
-        
-
-        
-    })
-}
-function buscatodacaja (req,res){
-    console.log('Buscando las Cajas...')
-    Caja.find({}, (err, todaslascajas) =>{
-        if(err) return res.status(500).send({Mensaje:`Error al mostrar. ${err}`}), console.log('Error del Servidor 500')
-        if(!todaslascajas) return res.status(404)-send({Mensaje: `Error, ${err}`}), console.log('Error del Servidor 404')
-        res.status(200).send({ todaslascajas }), console.log('Exito!')
-    })
-}
-function buscacajaespecifico(req,res,ID){
-    console.log('Buscando el ID de la Caja: ' + req.params.ID)
-    let IDcaja = req.params.ID;
-    Caja.findById(IDcaja, (err,resultado) =>{
-        if(err) return res.status(500).send({Mensaje: `Error al realizar la peticiones ${err}`}), console.log('Error 500 del Servidor')
-        if(!resultado) return res.status(404).send({Mensaje: `La caja no existe ${err}`}), console.log('Error 404 del Servidor, la caja NO existe')
-
-        res.status(200).send({Producto:resultado}), console.log('Exito.!')
     })
 }
 
@@ -198,7 +186,5 @@ module.exports = {
     eliminaproducto,
     CreaCaja,
     ActualizarCaja,
-    eliminaCaja,
-    buscatodacaja,
-    buscacajaespecifico
+    eliminaCaja
 }
