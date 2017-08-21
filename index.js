@@ -53,8 +53,8 @@ app.post('/api/productos', codificador.VerificarToken, controladores.guardaprodu
 app.put('/api/productos/:ID', controladores.actualizaproducto); // actualiza producto
 app.delete('/api/productos/:ID', controladores.eliminaproducto); //elimina producto
         //cajas
-app.get('/api/cajas/:ID/:OBJETO/:DATO', codificador.VerificarToken,caja.BusquedaAvanzada)
-app.get('/api/cajas/:ID', codificador.VerificarToken,caja.buscaespecifico); // Caja especifica
+app.get('/api/cajas/:OBJETO/:HIJO/:DATO', /*codificador.VerificarToken,*/caja.BusquedaAvanzada)
+app.get('/api/cajas/:ID', /*codificador.VerificarToken,*/caja.buscaespecifico); // Caja especifica
 app.get('/api/cajas', codificador.VerificarToken,caja.buscatodacaja); //Todas las Cajas
 app.post('/api/caja', controladores.CreaCaja);// Crear Caja
 app.put('/api/cajas/:ID', controladores.ActualizarCaja); //Actualiza caja

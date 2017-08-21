@@ -27,18 +27,17 @@ function buscaespecifico(req,res){
 }
 
 function BusquedaAvanzada (req,res){
-    console.log('Buscando el Nombre de la Caja: ' + req.params.ID);
-    let IDcaja = req.params.ID;
-    let campo = req.params.OBJETO;
+    let objeto = req.params.OBJETO + '.' + req.params.HIJO;
     let dato = req.params.DATO;
-    Caja.find({'Dueno':IDcaja},{campo:dato}, (err,resultado) =>{
+    Caja.find({objeto : {"$hint" : dato}}, (err,resultado) =>{
+    //db.getCollection('cajas').find({'Dueno':'Pedro'},{"Telefono":"4145887207"})
         if(err){
             return res.status(500).send({Mensaje: `Error al realizar la peticiones ${err}`}), console.log('Error 500 del Servidor')
         } else if(!resultado){
             return res.status(404).send({Mensaje: `El Objeto '${campo}' NO EXISTE`}), console.log('Error 404 del Servidor, la caja NO existe')
         }
 
-        res.status(200).send({Producto:resultado}), console.log('Exito.!')
+        res.status(200).send({Producto:resultado}), console.log('Exito.!'), console.log(resultado)
     })
 }
 module.exports = {
