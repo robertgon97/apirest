@@ -27,9 +27,14 @@ function buscaespecifico(req,res){
 }
 
 function BusquedaAvanzada (req,res){
-    let objeto = req.params.OBJETO + '.' + req.params.HIJO;
+    var A = req.params.OBJETO; var B = req.params.HIJO;
+    let objeto =  A + '.' + B ;
+    String(objeto)
+    console.log(objeto)
     let dato = req.params.DATO;
-    Caja.find({objeto : {"$hint" : dato}}, (err,resultado) =>{
+    let miobj = { objeto : {$eq : dato}};
+    console.log(miobj);
+    Caja.find( miobj , (err,resultado) =>{
     //db.getCollection('cajas').find({'Dueno':'Pedro'},{"Telefono":"4145887207"})
         if(err){
             return res.status(500).send({Mensaje: `Error al realizar la peticiones ${err}`}), console.log('Error 500 del Servidor')
